@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Calculator by Me
+        </title>
+
+    </head>
+    <body>
+        <table>
+           
+            <tbody>
+                <tr>
+                    <td colspan = "5" class ="content_gray" id="content"></td>
+                </tr>
+                <tr>
+                    <td onclick="appContent(this)">1</td>
+                    <td onclick="appContent(this)">2</td>
+                    <td onclick="appContent(this)">3</td>
+                    <td onclick="appContent(this)" class="td_orange">+</td>
+                    <td onclick="appContent(this)" class="td_orange">-</td>
+                </tr>
+                <tr>
+                    <td onclick="appContent(this)">4</td>
+                    <td onclick="appContent(this)">5</td>
+                    <td onclick="appContent(this)">6</td>
+                    <td onclick="appContent(this)" class="td_orange">*</td>
+                    <td onclick="appContent(this)" class="td_orange">/</td>
+                </tr>
+                <tr>
+                    <td onclick="appContent(this)">7</td>
+                    <td onclick="appContent(this)">8</td>
+                    <td onclick="appContent(this)">9</td>
+                    <td onclick="appContent(this)" class="td_orange">(</td>
+                    <td onclick="appContent(this)" class="td_orange">)</td>
+                </tr>
+                <tr>
+                    <td onclick="appContent(this)" class="td_orange">AC</td>
+                    <td onclick="appContent(this)">0</td>
+                    <td onclick="appContent(this)">.</td>
+                    <td onclick="appContent(this)" class="td_orange">%</td>
+                    <td onclick="appContent(this)" class="td_orange">=</td>
+            
+                </tr>
+            </tbody>
+    
+        </table>
+        <style>
+            td {
+                width: 100px;
+                height: 80px;
+                background-color: #777D84;
+                color: white;
+                background-color: #777D84;
+                text-align: center;
+            }
+
+            .td_orange{
+                background-color: coral;
+            }
+            .content_gray{
+                background-color: gray;
+            }
+        </style>
+        
+        <script>
+            function appContent(td)
+            {
+                //获取显示栏，用来记录输入
+                let content = document.getElementById("content");
+                
+                let index = content.innerText.indexOf("=");
+
+                if(index > -1){
+                    content.innerText = "";
+                }
+                
+                
+                //获取输入数字
+                let text = td.innerText; 
+
+                if(text == "AC"){
+                    //清除已经显示的数字
+                    content.innerText = "";
+                }
+                else if (text === "="){
+                //计算
+                
+               
+                    let resultText = parse(content.innerText);
+                    
+                    content.innerText = content.innerText + "=" + resultText;
+                }
+
+                else{
+                //显示输入数字
+                    content.innerText = content.innerText + text; 
+                }
+                 
+                
+            }
+            // 计算函数
+            function parse(content) {
+
+                //找最后一个左括号
+                var index = content.lastIndexOf("(");
+
+                if (index > -1) {
+                    var endIndex = content.indexOf(")",index);
+
+                    if(endIndex > -1) {
+                        //计算括号里的值
+                        var result = parse(content.substring(index+1, endIndex));
+
+                        // "2+3+(2+3*2)" ->  "2+3+8"
+                        return parse(content.substring(0,index) + ("" + result) + content.substring(endIndex+1));
+                    }
+                }
+
+
+                //获取加号的下标, indexOf()如果没找到就return-1， 如果找到了，return字符串的下标
+                //例如 “2+3” return 1，“23+3” return 2
+                
+                index = content.indexOf("+");
+
+                if(index > -1) {
+                    //加法
+                    // substring (start, end) 分割字符串函数, end 可以省略， 如果省略直接默认字符串结尾
+                    
+                    //递归
+                    return parse(content.substring(0, index)) + parse(content.substring(index+1));
+               
+                }
+                
+                index = content.indexOf("-")
+                if(index > -1) {
+                   
+                    return parse(content.substring(0, index)) - parse(content.substring(index+1));
+               
+                }
+
+                index = content.indexOf("*")
+                if(index > -1) {
+                   
+                    return parse(content.substring(0, index)) * parse(content.substring(index+1));
+               
+                }
+
+                index = content.indexOf("/")
+                if(index > -1) {
+                   
+                    let result = parse(content.substring(index+1));
+
+                    if (result === 0){
+                        return "wrong"
+                    }
+                    else{
+                        return parse(content.substring(0,index)) / result
+                    }
+               
+                }
+                
+                index = content.indexOf("%")
+                if(index > -1) {
+                   
+                    return parse(content.substring(0, index)) / 100;
+               
+                }
+
+                
+                
+                
+                
+                // string -> number
+                return content - 1 + 1;
+            }
+        </script>
+
+
+    </body>
+</html>
